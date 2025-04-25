@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  backend:
+    build:
+      context: backend
+      dockerfile: dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - ENV=prd
+      - POSTGRES_HOST=host.docker.internal
+  frontend:
+    build:
+      context: frontend
+      dockerfile: dockerfile
+    ports:
+      - 3000:3000
+  # frontend-local:
+  #   build:
+  #     context: frontend
+  #     dockerfile: dockerfile.local
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules/
+
+volumes:
+  db_data:
+    driver: local

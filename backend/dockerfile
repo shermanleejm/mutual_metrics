@@ -1,0 +1,9 @@
+FROM ghcr.io/astral-sh/uv:python3.10-alpine
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+USER root
+RUN mkdir /app
+WORKDIR /app
+COPY . .
+RUN uv sync --locked
+EXPOSE 8000
+CMD [ "uv", "run", "main.py" ]
